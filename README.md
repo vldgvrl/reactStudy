@@ -1,8 +1,9 @@
 # vueroutermenu
-
+A simple Menu-implementation with Vue-Router: https://appdividend.com/2018/12/28/vue-router-tutorial-with-example-how-to-use-routing-in-vuejs/
 ## Project setup
 ```
 npm install
+Also npm install vue-router and npm install bootstrap-vue is needed.
 ```
 
 ### Compiles and hot-reloads for development
