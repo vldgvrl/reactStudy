@@ -4,7 +4,7 @@
             Syötä tapahtuma
         </p>
         <div class="form-wrapper">
-            <b-form @submit.prevent="handleSubmit" @reset="onReset">
+            <b-form @submit.stop.prevent="handleSubmit" @reset="onReset">
                 <b-form-group
                     id="input-group-1"
                     label="Tapahtuman nimi:"
@@ -13,11 +13,17 @@
                 >
                     <b-form-input
                     id="input-1"
+                    name="input-1"
                     v-model="form.name"
                     type="text"
+                    v-validate="{ required: true, min: 3 }"
+                    :state="validateState('input-1')"
+                    :class="{ 'has-error': submitting && invalidName }"
                     placeholder="Syötä tapahtuman nimi"
                     required
                     ></b-form-input>
+                    <p v-if="error && submitting" class="error-message">❗ Tämä kenttä on pakollinen</p>
+                    <p v-if="success" class="success-message">✅ Tallennettu onnistuneesti</p>
                 </b-form-group>
 
                 <b-form-group 
@@ -28,10 +34,16 @@
                 >
                     <b-form-input
                     id="input-2"
+                    name="input-2"
                     v-model="form.date"
                     type="date"
+                    v-validate="{ required: true }"
+                    :state="validateState('input-2')"
+                    :class="{ 'has-error': submitting && invalidName }"
                     required
-                    ></b-form-input>          
+                    ></b-form-input>
+                    <p v-if="error && submitting" class="error-message">❗ Tämä kenttä on pakollinen</p>
+                    <p v-if="success" class="success-message">✅ Tallennettu onnistuneesti</p>
                 </b-form-group>
 
                 <b-form-group 
@@ -42,11 +54,18 @@
                 >
                     <b-form-input
                     id="input-3"
+                    name="input-3"
                     v-model="form.place"
+                    v-validate="{ required: true }"
+                    :state="validateState('input-3')"
+                    :class="{ 'has-error': submitting && invalidName }"
                     placeholder="esim. Helsinki"
                     required
                     ></b-form-input>
+                    <p v-if="error && submitting" class="error-message">❗ Tämä kenttä on pakollinen</p>
+                    <p v-if="success" class="success-message">✅ Tallennettu onnistuneesti</p>
                 </b-form-group>
+
                 <div class="button-wrapper">
                     <b-button type="submit" variant="primary">Lisää tapahtuma</b-button>
                     <b-button type="reset" variant="danger">Kumoa</b-button>
@@ -63,6 +82,7 @@
 </template>
 <script>
     import EventList from './EventList.vue'
+
 
     export default {
         components: { EventList },
@@ -99,15 +119,21 @@
             this.submitting = true
             this.clearStatus()
 
-            if (this.invalidName || this.invalidDate || this.invalidPlace) {
-              this.error = true
-              return
-            }
+            this.$validator.validateAll().then(result => {
+              if (!result) {
+                return;
+              }
 
-            this.addEvent(this.form)
-            this.error = false
-            this.success = true
-            this.submitting = false
+              if (this.invalidName || this.invalidDate || this.invalidPlace) {
+                this.error = true
+                return
+              }
+
+              this.addEvent(this.form)
+              this.error = false
+              this.success = true
+              this.submitting = false
+            });
           },
 
           async addEvent(newEvent) {
@@ -124,12 +150,26 @@
             }
           },
 
+          validateState(ref) {
+            if (
+                this.veeFields[ref] &&
+                (this.veeFields[ref].dirty || this.veeFields[ref].validated)
+            ) {
+              return !this.veeErrors.has(ref);
+            }
+            return null;
+          },
+
           onReset(event) {
             event.preventDefault()
             // Reset our form values
             this.form.name = ''
             this.form.date = ''
             this.form.place= ''
+
+            this.$nextTick(() => {
+              this.$validator.reset();
+            });
 
           },
 
@@ -154,6 +194,21 @@
         padding: 30px 0 30px;
         text-align: left;
         justify-content: space-between;
+    }
+    .b-form {
+      margin-bottom: 2rem;
+    }
+
+    [class*='-message'] {
+      font-weight: 500;
+    }
+
+    .error-message {
+      color: #d33c40;
+    }
+
+    .success-message {
+      color: #32a95d;
     }
     .form-group {
         margin-bottom: 1rem;
