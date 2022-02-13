@@ -1,10 +1,10 @@
 import Home from './components/Home.vue';
-import ListEvent from './components/ListEvent.vue';
+import EventList from './components/EventList.vue';
 import AddEvent from './components/AddEvent.vue';
 
 const routes = [
     { path: '/', name: 'Home', component: Home },
-    { path: '/list', name: 'ListEvent', component: ListEvent },
+    { path: '/list', name: 'EventList', component: EventList },
     { path: '/add', name: 'AddEvent', component: AddEvent },
 ];
 

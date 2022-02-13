@@ -1,12 +1,21 @@
 <template>
-  <p class="homeText">
-    Tervetuloa tapahtumakalenteriin
-  </p>
+  <div>
+    <p class="homeText">
+      Tervetuloa tapahtumakalenteriin
+    </p>
+    <event-list/> 
+  </div>
+
 </template>
 <script>
+import EventList from './EventList.vue'
 export default {
-  name: 'Home'
-};
+  name: 'Home',
+  components: {
+    EventList
+  },
+
+}
 </script>
 <style scoped>
 .homeText{
