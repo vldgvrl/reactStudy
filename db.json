@@ -59,6 +59,18 @@
       "date": "2022-02-13",
       "place": "Kirkkonummi",
       "id": 10
+    },
+    {
+      "id": 11,
+      "name": "dfsgdf",
+      "date": "2022-02-14",
+      "place": "sadd"
+    },
+    {
+      "id": 12,
+      "name": "Event",
+      "date": "2022-02-15",
+      "place": "Paikka"
     }
   ]
 }

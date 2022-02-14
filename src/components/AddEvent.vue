@@ -4,78 +4,73 @@
             Syötä tapahtuma
         </p>
         <div class="form-wrapper">
-            <b-form @submit.stop.prevent="handleSubmit" @reset="onReset">
-                <b-form-group
-                    id="input-group-1"
-                    label="Tapahtuman nimi:"
-                    label-for="input-1"
-                    description="Kirjoita tähän vain tapahtuman nimi, älä aikaa, paikkaa tai järjestäjää."
-                >
-                    <b-form-input
-                    id="input-1"
-                    name="input-1"
-                    v-model="form.name"
-                    type="text"
-                    v-validate="{ required: true, min: 3 }"
-                    :state="validateState('input-1')"
-                    :class="{ 'has-error': submitting && invalidName }"
-                    placeholder="Syötä tapahtuman nimi"
-                    required
-                    ></b-form-input>
-                    <p v-if="error && submitting" class="error-message">❗ Tämä kenttä on pakollinen</p>
-                    <p v-if="success" class="success-message">✅ Tallennettu onnistuneesti</p>
-                </b-form-group>
+                <b-form @submit.stop.prevent="handleSubmit" @reset="onReset">
+                    <b-form-group
+                        id="input-group-1"
+                        label="Tapahtuman nimi:"
+                        label-for="input-1"
+                        description="Kirjoita tähän vain tapahtuman nimi, älä aikaa, paikkaa tai järjestäjää."
+                    >
+                        <b-form-input
+                        id="input-1"
+                        name="input-1"
+                        v-model="form.name"
+                        type="text"
+                        :class="{ 'has-error': submitting && invalidName }"
+                        placeholder="Syötä tapahtuman nimi"
+                        @focus="clearStatus"
+                        @keypress="clearStatus"
+                        ></b-form-input>
+                        <p v-if="submitting && invalidName" class="error-message">❗ Nimi kenttä on pakollinen</p>
+                    </b-form-group>
 
-                <b-form-group 
-                    id="input-group-2" 
-                    label="Päivämäärä:" 
-                    label-for="input-2"
-                    description="Kirjoita päivämäärä muodossa kk/pp/vvvv tai valitse se kalenterista."
-                >
-                    <b-form-input
-                    id="input-2"
-                    name="input-2"
-                    v-model="form.date"
-                    type="date"
-                    v-validate="{ required: true }"
-                    :state="validateState('input-2')"
-                    :class="{ 'has-error': submitting && invalidName }"
-                    required
-                    ></b-form-input>
-                    <p v-if="error && submitting" class="error-message">❗ Tämä kenttä on pakollinen</p>
-                    <p v-if="success" class="success-message">✅ Tallennettu onnistuneesti</p>
-                </b-form-group>
+                    <b-form-group
+                        id="input-group-2"
+                        label="Päivämäärä:"
+                        label-for="input-2"
+                        description="Kirjoita päivämäärä muodossa kk/pp/vvvv tai valitse se kalenterista."
+                    >
+                        <b-form-input
+                        id="input-2"
+                        name="input-2"
+                        v-model="form.date"
+                        type="date"
+                        :class="{ 'has-error': submitting && invalidDate }"
+                        @focus="clearStatus"
+                        @keypress="clearStatus"
+                        ></b-form-input>
+                        <p v-if="submitting && invalidDate" class="error-message">❗ Päivämäärä on pakollinen kenttä</p>
+                    </b-form-group>
 
-                <b-form-group 
-                    id="input-group-3" 
-                    label="Tapahtuman paikka:" 
-                    label-for="input-3"
-                    description="Kirjoita paikan nimi tai osoite sekä kunta"
-                >
-                    <b-form-input
-                    id="input-3"
-                    name="input-3"
-                    v-model="form.place"
-                    v-validate="{ required: true }"
-                    :state="validateState('input-3')"
-                    :class="{ 'has-error': submitting && invalidName }"
-                    placeholder="esim. Helsinki"
-                    required
-                    ></b-form-input>
-                    <p v-if="error && submitting" class="error-message">❗ Tämä kenttä on pakollinen</p>
-                    <p v-if="success" class="success-message">✅ Tallennettu onnistuneesti</p>
-                </b-form-group>
+                    <b-form-group
+                        id="input-group-3"
+                        label="Tapahtuman paikka:"
+                        label-for="input-3"
+                        description="Kirjoita paikan nimi tai osoite sekä kunta"
+                    >
+                        <b-form-input
+                        id="input-3"
+                        name="input-3"
+                        v-model="form.place"
+                        :class="{ 'has-error': submitting && invalidPlace }"
+                        placeholder="esim. Helsinki"
+                        @focus="clearStatus"
+                        @keypress="clearStatus"
+                        ></b-form-input>
+                        <p v-if="submitting && invalidPlace" class="error-message">❗ Paikka kenttä on pakollinen</p>
+                        <p v-if="success" class="success-message">✅ Tallennettu onnistuneesti</p>
+                    </b-form-group>
 
-                <div class="button-wrapper">
-                    <b-button type="submit" variant="primary">Lisää tapahtuma</b-button>
-                    <b-button type="reset" variant="danger">Kumoa</b-button>
+                    <div class="button-wrapper">
+                        <b-button type="submit" variant="primary">Lisää tapahtuma</b-button>
+                        <b-button type="reset" variant="danger">Kumoa</b-button>
+                    </div>
+                </b-form>
+                <div class="result">
+                    <b-card class="mt-3" header="Form Data Result">
+                        <pre class="m-0">{{ form }}</pre>
+                    </b-card>
                 </div>
-            </b-form>
-            <div class="result">
-                <b-card class="mt-3" header="Form Data Result">
-                    <pre class="m-0">{{ form }}</pre>
-                </b-card>
-            </div>
         </div>
         <event-list/>
     </div>
@@ -119,11 +114,6 @@
             this.submitting = true
             this.clearStatus()
 
-            this.$validator.validateAll().then(result => {
-              if (!result) {
-                return;
-              }
-
               if (this.invalidName || this.invalidDate || this.invalidPlace) {
                 this.error = true
                 return
@@ -133,7 +123,6 @@
               this.error = false
               this.success = true
               this.submitting = false
-            });
           },
 
           async addEvent(newEvent) {
@@ -150,15 +139,7 @@
             }
           },
 
-          validateState(ref) {
-            if (
-                this.veeFields[ref] &&
-                (this.veeFields[ref].dirty || this.veeFields[ref].validated)
-            ) {
-              return !this.veeErrors.has(ref);
-            }
-            return null;
-          },
+
 
           onReset(event) {
             event.preventDefault()
@@ -166,11 +147,6 @@
             this.form.name = ''
             this.form.date = ''
             this.form.place= ''
-
-            this.$nextTick(() => {
-              this.$validator.reset();
-            });
-
           },
 
           clearStatus() {
@@ -195,19 +171,16 @@
         text-align: left;
         justify-content: space-between;
     }
-    .b-form {
-      margin-bottom: 2rem;
-    }
 
-    [class*='-message'] {
+    .form-wrapper [class*='-message'] {
       font-weight: 500;
     }
 
-    .error-message {
+    .form-wrapper .error-message {
       color: #d33c40;
     }
 
-    .success-message {
+    .form-wrapper .success-message {
       color: #32a95d;
     }
     .form-group {
