@@ -2,11 +2,12 @@
   <b-navbar
       toggleable="md"
       type="dark"
-      variant="info">
-    <b-navbar-brand :to="{ name: 'Home' }" v-if='auth'>Tapahtumakalenterista</b-navbar-brand>
+      variant="dark"
+      class="px-10">
+    <b-navbar-brand class="mx-5">Employee Flex Time App</b-navbar-brand>
     <b-navbar-nav>
-      <b-nav-item :to="{ name: 'AddEvent' }"  v-if='auth'>Lisää tapahtuma</b-nav-item>
-      <b-nav-item :to="{ name: 'EventList' }" v-if='auth'>Listaa tapahtuma</b-nav-item>
+      <b-nav-item :to="{ name: 'Home' }" v-if='auth'>Home</b-nav-item>
+      <b-nav-item :to="{ name: 'AddEvent' }"  v-if='auth'>Add leave period</b-nav-item>
     </b-navbar-nav>
   </b-navbar>
 </template>
@@ -16,7 +17,7 @@ export default {
   name: "Navbar",
   computed: {
     auth () {
-      return this.$store.getters.ifAuthenticated
+      return true//this.$store.getters.ifAuthenticated
     }
   },
   methods: {
@@ -33,5 +34,5 @@ export default {
 </script>
 
 <style scoped>
-
+  
 </style>

@@ -1,16 +1,16 @@
 <template>
-  <b-container id="app">
-    <b-row>
-      <b-col>
-        <navbar/>
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-col>
-        <router-view/>
-      </b-col>
-    </b-row>
-  </b-container>
+  <div>
+    <div> 
+      <navbar/>
+    </div>
+    <b-container id="app">
+      <b-row>
+        <b-col>
+          <router-view/>
+        </b-col>
+      </b-row>
+    </b-container>
+  </div>
 
 </template>
 
@@ -33,7 +33,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 10px;
 }
 
 </style>

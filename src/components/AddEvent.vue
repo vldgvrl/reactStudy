@@ -1,69 +1,69 @@
 <template>
     <div>
         <p class="homeText">
-            Syötä tapahtuma
+            Add leave period
         </p>
         <div class="form-wrapper">
                 <b-form @submit.stop.prevent="handleSubmit" @reset="onReset">
                     <b-form-group
                         id="input-group-1"
-                        label="Tapahtuman nimi:"
+                        label="Type of leave:"
                         label-for="input-1"
-                        description="Kirjoita tähän vain tapahtuman nimi, älä aikaa, paikkaa tai järjestäjää."
+                        description="Write the type of leave"
                     >
                         <b-form-input
                         id="input-1"
                         name="input-1"
-                        v-model="form.name"
+                        v-model="form.LeaveType"
                         type="text"
                         :class="{ 'has-error': submitting && invalidName }"
-                        placeholder="Syötä tapahtuman nimi"
+                        placeholder="Ex.: sick leave, vacation, unpaid leave..."
                         @focus="clearStatus"
                         @keypress="clearStatus"
                         ></b-form-input>
-                        <p v-if="submitting && invalidName" class="error-message">❗ Nimi kenttä on pakollinen</p>
+                        <p v-if="submitting && invalidName" class="error-message">❗ Mandatory field</p>
                     </b-form-group>
 
                     <b-form-group
                         id="input-group-2"
-                        label="Päivämäärä:"
+                        label="Period starts from:"
                         label-for="input-2"
-                        description="Kirjoita päivämäärä muodossa kk/pp/vvvv tai valitse se kalenterista."
+                        description="Write a date in format dd/mm/yyyy or choose a date from calendar."
                     >
                         <b-form-input
                         id="input-2"
                         name="input-2"
-                        v-model="form.date"
+                        v-model="form.StartDate"
                         type="date"
-                        :class="{ 'has-error': submitting && invalidDate }"
+                        :class="{ 'has-error': submitting && invalidStartDate }"
                         @focus="clearStatus"
                         @keypress="clearStatus"
                         ></b-form-input>
-                        <p v-if="submitting && invalidDate" class="error-message">❗ Päivämäärä on pakollinen kenttä</p>
+                        <p v-if="submitting && invalidStartDate" class="error-message">❗ Start date is mamdatory field</p>
                     </b-form-group>
 
                     <b-form-group
                         id="input-group-3"
-                        label="Tapahtuman paikka:"
+                        label="Period ends at:"
                         label-for="input-3"
-                        description="Kirjoita paikan nimi tai osoite sekä kunta"
+                        description="Write a date in format dd/mm/yyyy or choose a date from calendar."
                     >
                         <b-form-input
                         id="input-3"
                         name="input-3"
-                        v-model="form.place"
-                        :class="{ 'has-error': submitting && invalidPlace }"
-                        placeholder="esim. Helsinki"
+                        v-model="form.EndDate"
+                        type="date"
+                        :class="{ 'has-error': submitting && invalidEndDate }"
                         @focus="clearStatus"
                         @keypress="clearStatus"
                         ></b-form-input>
-                        <p v-if="submitting && invalidPlace" class="error-message">❗ Paikka kenttä on pakollinen</p>
-                        <p v-if="success" class="success-message">✅ Tallennettu onnistuneesti</p>
+                        <p v-if="submitting && invalidEndDate" class="error-message">❗ End date is mamdatory field</p>
+                        <p v-if="success" class="success-message">✅ Saved successfully</p>
                     </b-form-group>
 
                     <div class="button-wrapper">
-                        <b-button type="submit" variant="primary">Lisää tapahtuma</b-button>
-                        <b-button type="reset" variant="danger">Kumoa</b-button>
+                        <b-button type="submit" variant="primary">Save</b-button>
+                        <b-button type="reset" variant="danger">Cancel</b-button>
                     </div>
                 </b-form>
                 <div class="result">
@@ -72,15 +72,16 @@
                     </b-card>
                 </div>
         </div>
-        <event-list/>
+        <hours-list/>
     </div>
 </template>
 <script>
-    import EventList from './EventList.vue'
+    import HoursList from './HoursList.vue'
+    import axios from 'axios'
 
 
     export default {
-        components: { EventList },
+        components: { HoursList},
         name: 'AddEvent',
 
         data() {
@@ -89,23 +90,22 @@
                 submitting: false,
                 success: false,
                 form: {
-                    id: '',
-                    name: '',
-                    date: '',
-                    place: ''
+                    LeaveType: '',
+                    StartDate: '',
+                    EndDate: '',
                 },
             }
         },
 
         computed: {
           invalidName() {
-            return this.form.name === ''
+            return this.form.LeaveType === ''
           },
-          invalidDate() {
-            return this.form.date === ''
+          invalidStartDate() {
+            return this.form.StartDate === ''
           },
-          invalidPlace() {
-            return this.form.place === ''
+          invalidEndDate() {
+            return this.form.EndDate === ''
           },
         },
 
@@ -114,7 +114,7 @@
             this.submitting = true
             this.clearStatus()
 
-              if (this.invalidName || this.invalidDate || this.invalidPlace) {
+              if (this.invalidName || this.invalidStartDate || this.invalidEndDate ) {
                 this.error = true
                 return
               }
@@ -126,17 +126,14 @@
           },
 
           async addEvent(newEvent) {
-            try {
-              const response=await fetch('http://localhost:3001/events', {
-                method: 'POST',
-                body: JSON.stringify(newEvent),
-                headers: { 'Content-type': 'application/json; charset=UTF-8' },
+            axios.post('https://vladimir-gavrilov.outsystemscloud.com/HoursReport/rest/leave/save',
+              {'LeaveType': newEvent.LeaveType, 'StartDate': newEvent.StartDate, 'EndDate': newEvent.EndDate},
+              { headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')}})
+              .then(res => {
+                console.log(res.data.Response)
               })
-              const data=await response.json()
-              this.events=[...this.events, data]
-            } catch(error) {
-              console.error(error)
-            }
+              .catch(error => console.log(error))
+
           },
 
 
@@ -144,9 +141,9 @@
           onReset(event) {
             event.preventDefault()
             // Reset our form values
-            this.form.name = ''
-            this.form.date = ''
-            this.form.place= ''
+            this.form.LeaveType = ''
+            this.form.StartDate = ''
+            this.form.EndDate = ''
           },
 
           clearStatus() {

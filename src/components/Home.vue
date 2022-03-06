@@ -1,25 +1,19 @@
 <template>
   <div>
     <p class="homeText">
-      Tervetuloa tapahtumakalenteriin
+      Current year hours
     </p>
-    <div class="mt-5">
-      <button @click="sendToken">
-        Send token
-      </button>
-    </div>
-
-    <event-list/> 
+    <hours-list/>
   </div>
 
 </template>
 <script>
-import EventList from './EventList.vue'
+import HoursList from './HoursList.vue'
 import axios from "axios";
 export default {
   name: 'Home',
   components: {
-    EventList
+    HoursList
   },
 
   methods : {
