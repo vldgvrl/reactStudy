@@ -169,6 +169,9 @@
           clearStatus() {
             this.success = false
             this.error = false
+            this.successResponse = '',
+            this.errorResponse = '',
+            this.showAlertError = false
           }
         }
     }
