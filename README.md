@@ -1,6 +1,21 @@
-# vueroutermenu
-A simple Menu-implementation with Vue-Router: https://appdividend.com/2018/12/28/vue-router-tutorial-with-example-how-to-use-routing-in-vuejs/
-## Project setup
+# Flex Time App
+Application that helps to track employee working hours. 
+User interface implemented through the REST API service.
+
+## Application functionality
+* User has possibility to login the interface with email and password that was already exists in Backend server.
+* User could add the ammount of working hours from the main list
+* Updating of working hours happening through the modal window
+* User has possibility to add the period of leave (vacation, sick leave, studing ...)
+* Leaving period form has own page with 3 fields: Leave type, Start date, End date
+* User has possibility to loggout from the application
+
+### REST API documentation
+* Get and Update hours [swagger link](https://vladimir-gavrilov.outsystemscloud.com/HoursReport/rest/API/#/)
+* Add employee leave [swagger link](https://vladimir-gavrilov.outsystemscloud.com/HoursReport/rest/API/#/)
+* Get token [swagger link](https://vladimir-gavrilov.outsystemscloud.com/HoursReport/rest/API/#/)
+
+### Project setup
 ```
 npm install
 Also npm install vue-router and npm install bootstrap-vue is needed.
