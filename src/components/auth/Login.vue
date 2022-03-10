@@ -1,43 +1,50 @@
 <template>
-  <div class="center">
-    <p class="h1 mb-4">
-      Kirjaudu sisään
-    </p>
-    <div class="login-wrapper p-4">
-      <b-form @submit.prevent="onSubmit">
-        <b-form-group
-            id="input-group-1"
-            label="Sähköpostiosoite:"
-            label-for="input-1"
-            class="mb-4"
-        >
-          <b-form-input
-              id="input-1"
-              v-model="email"
-              type="email"
-              placeholder="Sähköposti"
-              required
-          ></b-form-input>
-        </b-form-group>
-
-        <b-form-group id="input-group-2" label="Lisää salasana:" label-for="input-2">
-          <b-form-input
-              id="input-2"
-              v-model="password"
-              type="password"
-              placeholder="Salasana"
-              required
+  <div>
+    <b-alert variant="danger" :show="hasErrors">
+      {{errorMessage}}
+    </b-alert>
+    <div class="center">
+      <p class="h1 mb-4 mt-4">
+        Login
+      </p>
+      <div class="login-wrapper p-4">
+        <b-form @submit.prevent="onSubmit">
+          <b-form-group
+              id="input-group-1"
+              label="Email"
+              label-for="input-1"
               class="mb-4"
-          ></b-form-input>
-        </b-form-group>
+          >
+            <b-form-input
+                id="input-1"
+                v-model="email"
+                type="email"
+                placeholder="Email address"
+                required
+            ></b-form-input>
+          </b-form-group>
 
-        <div class="flex-center">
-          <b-button type="submit" variant="primary">Kirjaudu sisään</b-button>
-        </div>
-      </b-form>
+          <b-form-group id="input-group-2" label="Password:" label-for="input-2">
+            <b-form-input
+                id="input-2"
+                v-model="password"
+                type="password"
+                placeholder="Your password"
+                required
+                class="mb-4"
+            ></b-form-input>
+          </b-form-group>
+
+          <div class="flex-center">
+            <b-button type="submit" :disabled="loading" variant="primary">
+              Login
+              <b-spinner small variant="light" v-show='loading'></b-spinner>
+            </b-button>
+          </div>
+        </b-form>
+      </div>
     </div>
   </div>
-
 </template>
 <script>
   import axios from 'axios'
@@ -46,38 +53,49 @@
     state: {
       Token: null,
       UserId: null,
-      UserName: null
+      UserName: null,
     },
+
     data () {
       return {
         email: '',
-        password: ''
+        password: '',
+        loading: false,
+        dismissSecs: 5,
+        dismissCountDown: 0,
+        errorMessage: '',
+        hasErrors: false
       }
     },
+
+
     methods : {
       async onSubmit () {
+        this.loading = true
+        this.hasErrors = false
+        this.errorMessage = ""
         axios.post('https://vladimir-gavrilov.outsystemscloud.com/HoursReport/rest/token/get', {
           UserName: this.email,
           Password: this.password
         })
       .then(res => {
-          console.log(res)
-        /**
-        commit('authUser', {
-            token: res.data.Token,
-            userId: res.data.UserId,
-            userName: res.data.UserName
-          })*/
           localStorage.setItem('token', res.data.Token)
           localStorage.setItem('userId', res.data.UserId)
           localStorage.setItem('userName', res.data.UserName)
-          this.$router.push("/Home")
+          this.$router.push("/")
+          location.reload()
+
         })
-            .catch(error => console.log(error))
+            .catch(error => {
+              this.hasErrors = true
+              this.errorMessage = error.response.data.Errors
+              console.log(error)
+              this.loading = false
+            })
 
-      }
-    }
+      },
 
+    },
    }
 
 

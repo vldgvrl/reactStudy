@@ -1,8 +1,14 @@
 <template>
     <div>
-        <p class="homeText">
+        <p class="homeText mb-5">
             Add leave period
         </p>
+        <b-alert variant="danger" :show="showAlertError">
+          {{errorResponse}}
+        </b-alert>
+        <b-alert variant="success" :show="success">
+          {{successResponse}}
+        </b-alert>
         <div class="form-wrapper">
                 <b-form @submit.stop.prevent="handleSubmit" @reset="onReset">
                     <b-form-group
@@ -39,7 +45,7 @@
                         @focus="clearStatus"
                         @keypress="clearStatus"
                         ></b-form-input>
-                        <p v-if="submitting && invalidStartDate" class="error-message">❗ Start date is mamdatory field</p>
+                        <p v-if="submitting && invalidStartDate" class="error-message">❗ Start date is mandatory field</p>
                     </b-form-group>
 
                     <b-form-group
@@ -57,8 +63,8 @@
                         @focus="clearStatus"
                         @keypress="clearStatus"
                         ></b-form-input>
-                        <p v-if="submitting && invalidEndDate" class="error-message">❗ End date is mamdatory field</p>
-                        <p v-if="success" class="success-message">✅ Saved successfully</p>
+                        <p v-if="submitting && invalidEndDate" class="error-message">❗ End date is mandatory field</p>
+                        <p v-if="submitting && datesNotCorrect" class="error-message">❗ End date should be greater than Start date</p>
                     </b-form-group>
 
                     <div class="button-wrapper">
@@ -78,17 +84,21 @@
 <script>
     import HoursList from './HoursList.vue'
     import axios from 'axios'
+    import moment from 'moment'
 
 
     export default {
         components: { HoursList},
-        name: 'AddEvent',
+        name: 'AddLeave',
 
         data() {
             return {
                 error: false,
                 submitting: false,
                 success: false,
+                successResponse: '',
+                errorResponse: '',
+                showAlertError: false,
                 form: {
                     LeaveType: '',
                     StartDate: '',
@@ -98,6 +108,7 @@
         },
 
         computed: {
+          //Set validations: field should not be empty, end date should be greater then start date
           invalidName() {
             return this.form.LeaveType === ''
           },
@@ -107,6 +118,9 @@
           invalidEndDate() {
             return this.form.EndDate === ''
           },
+          datesNotCorrect() {
+                return moment(this.form.StartDate).isAfter(this.form.EndDate)
+          }
         },
 
         methods: {
@@ -114,32 +128,38 @@
             this.submitting = true
             this.clearStatus()
 
-              if (this.invalidName || this.invalidStartDate || this.invalidEndDate ) {
+              if (this.invalidName || this.invalidStartDate || this.invalidEndDate || this.datesNotCorrect ) {
                 this.error = true
                 return
-              }
+              } 
 
               this.addEvent(this.form)
               this.error = false
-              this.success = true
               this.submitting = false
+              this.onReset()
           },
 
+          //Call post action with json body. Provide token with 'Authorization' header
           async addEvent(newEvent) {
             axios.post('https://vladimir-gavrilov.outsystemscloud.com/HoursReport/rest/leave/save',
               {'LeaveType': newEvent.LeaveType, 'StartDate': newEvent.StartDate, 'EndDate': newEvent.EndDate},
               { headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')}})
               .then(res => {
-                console.log(res.data.Response)
+                //Set success message to notification box
+                this.success = true
+                this.successResponse = res.data.Response
               })
-              .catch(error => console.log(error))
+              .catch(error => {
+                    //Set error message to alert
+                    this.showAlertError = true
+                    this.errorResponse = error.response.data.Errors
+                })
 
           },
 
 
 
-          onReset(event) {
-            event.preventDefault()
+          onReset() {
             // Reset our form values
             this.form.LeaveType = ''
             this.form.StartDate = ''

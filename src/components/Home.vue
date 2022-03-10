@@ -1,5 +1,8 @@
 <template>
   <div>
+    <b-alert variant="danger" :show="hasErrors">
+      {{errorMessage}}
+    </b-alert>
     <p class="homeText">
       Current year hours
     </p>
@@ -9,27 +12,11 @@
 </template>
 <script>
 import HoursList from './HoursList.vue'
-import axios from "axios";
 export default {
   name: 'Home',
   components: {
     HoursList
-  },
-
-  methods : {
-    async sendToken() {
-      axios.post('https://vladimir-gavrilov.outsystemscloud.com/HoursReport/rest/v1/addhours?HoursTrackIId=147&NewValue=50',
-          {},{ headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')}})
-          .then(res => {
-            console.log(res);
-            console.log('token from storage:');
-            console.log(localStorage.getItem('token'))
-          })
-          .catch(error => console.log(error))
-
-    }
   }
-
 }
 </script>
 <style scoped>
